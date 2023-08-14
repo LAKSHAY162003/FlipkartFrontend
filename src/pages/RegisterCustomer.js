@@ -6,13 +6,13 @@ import axios from 'axios';
 import { mnemonicToEntropy } from 'ethers/lib/utils';
 
 
-const RegisterBusiness = () => {
-  const [businessData, setBusinessData] = useState({
-    name: '',
-    email: '',
+const RegisterCustomer = () => {
+  const [customerData, setCustomerData] = useState({
+    firstName: '',
+    lastName: '',
+    userEmail: '',
     pwd:'',
-    businessWalletAddress:'',
-    tokenSymbol:''
+    userWalletAddress:''
     // Add more fields as needed
   });
 
@@ -737,37 +737,39 @@ const RegisterBusiness = () => {
         }
       ]; // Replace with your smart contract ABI
 
-      const contract = new ethers.Contract(contractAddress, contractABI, signer);
+      const contract = new ethers.
+      Contract(contractAddress, contractABI, signer);
 
-      const flipkartAddress ='0xE64b9b9fa376f934D78863357480687c0BfdAc68';
       const add=await signer.getAddress();
-      const tx = await contract.regBusiness(
-        flipkartAddress,
-        businessData.name,
-        businessData.email,
-        add, // Sender's address
-        businessData.tokenSymbol, // Replace with the actual token symbol
-        18, // Replace with the actual decimal value
-      );
-      const txResponse = await tx.wait();
+
+      const transaction = await contract.
+      regCustomer(customerData.firstName,
+        customerData.lastName,customerData.userEmail, add);
+      
+      const txResponse = await transaction.wait();
       console.log('Transaction Response : ',txResponse.transactionHash);
       
       const hash=txResponse.transactionHash;
-      const ltAddress = await contract.getBusinessCoin(add);
-      console.log('LT Address:', ltAddress);
 
-      const password=businessData.pwd;
-      const businessWalletAddress=add;
-      const email=businessData.email;
-      const name=businessData.name;
+      // userWalletAddress:req.body.userWalletAddress,
+    //   firstName:req.body.firstName,
+    //   lastName:req.body.lastName,
+    //   userEmail:req.body.userEmail,
+
+      const pwd=customerData.pwd;
+      const userWalletAddress=add;
+      const userEmail=customerData.userEmail;
+      const firstName=customerData.firstName;
+      const lastName=customerData.lastName;
+
+
       // Send transaction hash and other data to your backend
-      const response = await axios.post('http://localhost:3000/registerBusiness', {
+      const response = await axios.post('http://localhost:3000/registerCustomer', {
         signedTransaction:hash,
-        businessWalletAddress,
-        name,
-        email,
-        pwd: password,
-        tokenContractAddress:ltAddress
+        userWalletAddress,
+        firstName,
+        userEmail,
+        pwd: pwd
       });
 
       // Handle the response from the backend
@@ -798,25 +800,35 @@ const RegisterBusiness = () => {
   return (
     <div className="container">
       <div className="register-form">
-        <h2>Register Your Business</h2>
+        <h2>Register Your Customer</h2>
         <form onSubmit={handleSubmit}>
-          <label htmlFor="businessName">Business Name</label>
+          <label htmlFor="fName">First Name</label>
           <input
             type="text"
-            id="businessName"
+            id="fName"
             placeholder="Enter your business name"
-            value={businessData.name}
-            onChange={(e) => setBusinessData({ ...businessData, name: e.target.value })}
+            value={customerData.firstName}
+            onChange={(e) => setCustomerData({ ...customerData, firstName: e.target.value })}
             required
           />
 
-          <label htmlFor="businessEmail">Business Email</label>
+          <label htmlFor="lName">Last Name</label>
+          <input
+            type="text"
+            id="lName"
+            placeholder="Enter your business name"
+            value={customerData.lastName}
+            onChange={(e) => setCustomerData({ ...customerData, lastName: e.target.value })}
+            required
+          />
+
+          <label htmlFor="customerEmail">Customer Email</label>
           <input
             type="email"
-            id="businessEmail"
+            id="customerEmail"
             placeholder="Enter your business email"
-            value={businessData.email}
-            onChange={(e) => setBusinessData({ ...businessData, email: e.target.value })}
+            value={customerData.userEmail}
+            onChange={(e) => setCustomerData({ ...customerData, userEmail: e.target.value })}
             required
           />
 
@@ -825,8 +837,8 @@ const RegisterBusiness = () => {
             type="text"
             id="pwd"
             placeholder="Enter your pwd"
-            value={businessData.pwd}
-            onChange={(e) => setBusinessData({ ...businessData, pwd: e.target.value })}
+            value={customerData.pwd}
+            onChange={(e) => setCustomerData({ ...customerData, pwd: e.target.value })}
             required
           />
 
@@ -840,25 +852,14 @@ const RegisterBusiness = () => {
             required
           /> */}
 
-        <label htmlFor="symb">Business Token Symbol</label>
-          <input
-            type="text"
-            id="symb"
-            placeholder="Enter your Token Symbol"
-            value={businessData.tokenSymbol}
-            onChange={(e) => setBusinessData({ ...businessData, tokenSymbol: e.target.value })}
-            required
-          />
 
           {/* Add more input fields for other details */}
           
           <button type="submit" className="btn-register">Register</button>
-          <button type="button" className="btn-register" onClick={getBusinessBalance}>Get token Value !!</button>
-          <button type="button" className="btn-register" onClick={getAllBusiness}>Get All Businesses !!</button>
         </form>
       </div>
     </div>
   );
 };
 
-export default RegisterBusiness;
+export default RegisterCustomer;

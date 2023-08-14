@@ -6,13 +6,10 @@ import axios from 'axios';
 import { mnemonicToEntropy } from 'ethers/lib/utils';
 
 
-const RegisterBusiness = () => {
-  const [businessData, setBusinessData] = useState({
-    name: '',
-    email: '',
+const LoginCustomer = () => {
+  const [customerData, setCustomerData] = useState({
     pwd:'',
-    businessWalletAddress:'',
-    tokenSymbol:''
+    userWalletAddress:''
     // Add more fields as needed
   });
 
@@ -457,317 +454,17 @@ const RegisterBusiness = () => {
         // Prompt user for account connections
         await provider.send("eth_requestAccounts", []);
         const signer = provider.getSigner();
-        
-      const contractAddress = '0xd302b4657979b53d539108504f3fc94b1083260d'; // Replace with your smart contract address
-      const contractABI = [
-        {
-          "inputs": [],
-          "payable": false,
-          "stateMutability": "nonpayable",
-          "type": "constructor"
-        },
-        {
-          "constant": true,
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "name": "businesses",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "busAd",
-              "type": "address"
-            },
-            {
-              "internalType": "string",
-              "name": "name",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "email",
-              "type": "string"
-            },
-            {
-              "internalType": "bool",
-              "name": "isReg",
-              "type": "bool"
-            },
-            {
-              "internalType": "contract loyalty_points",
-              "name": "lt",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "count",
-              "type": "uint256"
-            }
-          ],
-          "payable": false,
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "constant": true,
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "name": "customers",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "cusAd",
-              "type": "address"
-            },
-            {
-              "internalType": "string",
-              "name": "firstName",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "lastName",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "email",
-              "type": "string"
-            },
-            {
-              "internalType": "bool",
-              "name": "isReg",
-              "type": "bool"
-            }
-          ],
-          "payable": false,
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "constant": true,
-          "inputs": [],
-          "name": "flipkartAccount",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "payable": false,
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "constant": true,
-          "inputs": [],
-          "name": "isAddressInitialized",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "payable": false,
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "constant": false,
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "flipkartAddress",
-              "type": "address"
-            },
-            {
-              "internalType": "string",
-              "name": "_bName",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "_email",
-              "type": "string"
-            },
-            {
-              "internalType": "address",
-              "name": "_bAd",
-              "type": "address"
-            },
-            {
-              "internalType": "string",
-              "name": "_symbol",
-              "type": "string"
-            },
-            {
-              "internalType": "uint8",
-              "name": "_decimal",
-              "type": "uint8"
-            }
-          ],
-          "name": "regBusiness",
-          "outputs": [],
-          "payable": false,
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "constant": true,
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_bAd",
-              "type": "address"
-            }
-          ],
-          "name": "getBusinessCoin",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "payable": false,
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "constant": false,
-          "inputs": [
-            {
-              "internalType": "string",
-              "name": "_firstName",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "_lastName",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "_email",
-              "type": "string"
-            },
-            {
-              "internalType": "address",
-              "name": "_cAd",
-              "type": "address"
-            }
-          ],
-          "name": "regCustomer",
-          "outputs": [],
-          "payable": false,
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "constant": false,
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_bAd",
-              "type": "address"
-            }
-          ],
-          "name": "joinBusiness",
-          "outputs": [],
-          "payable": false,
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "constant": false,
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_cAd",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "_points",
-              "type": "uint256"
-            },
-            {
-              "internalType": "address",
-              "name": "_bAd",
-              "type": "address"
-            }
-          ],
-          "name": "reward",
-          "outputs": [],
-          "payable": false,
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "constant": true,
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_bAd",
-              "type": "address"
-            }
-          ],
-          "name": "getBusinessBalance",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "payable": false,
-          "stateMutability": "view",
-          "type": "function"
-        }
-      ]; // Replace with your smart contract ABI
 
-      const contract = new ethers.Contract(contractAddress, contractABI, signer);
+        const add=await signer.getAddress();
 
-      const flipkartAddress ='0xE64b9b9fa376f934D78863357480687c0BfdAc68';
-      const add=await signer.getAddress();
-      const tx = await contract.regBusiness(
-        flipkartAddress,
-        businessData.name,
-        businessData.email,
-        add, // Sender's address
-        businessData.tokenSymbol, // Replace with the actual token symbol
-        18, // Replace with the actual decimal value
-      );
-      const txResponse = await tx.wait();
-      console.log('Transaction Response : ',txResponse.transactionHash);
-      
-      const hash=txResponse.transactionHash;
-      const ltAddress = await contract.getBusinessCoin(add);
-      console.log('LT Address:', ltAddress);
+      const pwd=customerData.pwd;
+      const userWalletAddress=add;
 
-      const password=businessData.pwd;
-      const businessWalletAddress=add;
-      const email=businessData.email;
-      const name=businessData.name;
+
       // Send transaction hash and other data to your backend
-      const response = await axios.post('http://localhost:3000/registerBusiness', {
-        signedTransaction:hash,
-        businessWalletAddress,
-        name,
-        email,
-        pwd: password,
-        tokenContractAddress:ltAddress
+      const response = await axios.post('http://localhost:3000/loginCustomer', {
+        userWalletAddress,
+        pwd: pwd
       });
 
       // Handle the response from the backend
@@ -798,35 +495,16 @@ const RegisterBusiness = () => {
   return (
     <div className="container">
       <div className="register-form">
-        <h2>Register Your Business</h2>
+        <h2>Login Your Customer</h2>
         <form onSubmit={handleSubmit}>
-          <label htmlFor="businessName">Business Name</label>
-          <input
-            type="text"
-            id="businessName"
-            placeholder="Enter your business name"
-            value={businessData.name}
-            onChange={(e) => setBusinessData({ ...businessData, name: e.target.value })}
-            required
-          />
-
-          <label htmlFor="businessEmail">Business Email</label>
-          <input
-            type="email"
-            id="businessEmail"
-            placeholder="Enter your business email"
-            value={businessData.email}
-            onChange={(e) => setBusinessData({ ...businessData, email: e.target.value })}
-            required
-          />
 
         <label htmlFor="pwd">Password</label>
           <input
             type="text"
             id="pwd"
             placeholder="Enter your pwd"
-            value={businessData.pwd}
-            onChange={(e) => setBusinessData({ ...businessData, pwd: e.target.value })}
+            value={customerData.pwd}
+            onChange={(e) => setCustomerData({ ...customerData, pwd: e.target.value })}
             required
           />
 
@@ -840,25 +518,14 @@ const RegisterBusiness = () => {
             required
           /> */}
 
-        <label htmlFor="symb">Business Token Symbol</label>
-          <input
-            type="text"
-            id="symb"
-            placeholder="Enter your Token Symbol"
-            value={businessData.tokenSymbol}
-            onChange={(e) => setBusinessData({ ...businessData, tokenSymbol: e.target.value })}
-            required
-          />
 
           {/* Add more input fields for other details */}
           
           <button type="submit" className="btn-register">Register</button>
-          <button type="button" className="btn-register" onClick={getBusinessBalance}>Get token Value !!</button>
-          <button type="button" className="btn-register" onClick={getAllBusiness}>Get All Businesses !!</button>
         </form>
       </div>
     </div>
   );
 };
 
-export default RegisterBusiness;
+export default LoginCustomer;
