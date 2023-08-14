@@ -6,6 +6,7 @@ import { BrowserRouter,Routes,Route } from 'react-router-dom';
 import RegisterBusiness from './pages/RegisterBusiness';
 import RegisterCustomer from './pages/RegisterCustomer';
 import LoginCustomer from './pages/loginCustomer';
+import GetReward from './pages/getReward';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -15,6 +16,8 @@ root.render(
           <Route path="/joinBusiness" element={<RegisterBusiness />} />
           <Route path="/joinCustomer" element={<RegisterCustomer />} />
           <Route path="/loginCustomer" element={<LoginCustomer />} />
+          <Route path="/getReward" element={<GetReward />} />
+          
           <Route path="/" element={<App/>} />
         </Routes>
       </BrowserRouter>

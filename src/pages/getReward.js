@@ -3,19 +3,29 @@ import React, { useEffect, useState } from 'react';
 import './RegisterBusiness.css'; // Import the custom CSS file
 import { ethers } from "ethers";
 import axios from 'axios';
-import { mnemonicToEntropy } from 'ethers/lib/utils';
+import './ProductList.css'; // Import the CSS file
 
 
-const RegisterBusiness = () => {
-  const [businessData, setBusinessData] = useState({
-    name: '',
-    email: '',
-    pwd:'',
-    businessWalletAddress:'',
-    tokenSymbol:''
-    // Add more fields as needed
-  });
+const GetReward = () => {
 
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    // Fetch product data from the backend
+
+    const startUp=async()=>{
+     await axios.get('http://localhost:3000/getListOfBusiness')
+      .then(response => {
+        setProducts(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching products:', error);
+      });
+    }
+
+    startUp();
+    
+  }, []);
 
   const connectWallet = async () => {
     if (window.ethereum) {
@@ -35,8 +45,8 @@ const RegisterBusiness = () => {
   },[]); // means at startup !!
 
 
-  // "0x1c9A0af0b1a14DaD32D93e9593740407Ac691BAe"
-  const getBusinessBalance=async()=>{
+  // ""eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGRhMTE3MDVhM2NmMzUyNTE3ZjIwZWIiLCJyb2xlIjoiQ3VzdG9tZXIiLCJpYXQiOjE2OTIwMTI5MTJ9.v3_lYDMHJbd273SEUa1e5rChmjD5ozYCiFWvuNC6xAo""
+  const getBusinessBalance=async(tokenContractAddress)=>{
     
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     // Prompt user for account connections
@@ -436,18 +446,25 @@ const RegisterBusiness = () => {
         "type": "function"
       }
     ];
-    const flipkartAddress ='0x37144a383A69d528A1176Ba237a0F860dA160141';
-      
+    const flipkartAddress ='0xee100e284DC8417aC5D803AbA0DcD743E76B1374';
+    
     // idhar add token contract address by taking it from the : 
     // database itself !!
-    const tokenContract = new ethers.Contract("0x5eA776A5665dABbE9E3e1279F09F46ebc1929A00", tokenABI, provider);
+    const tokenContract = new ethers.Contract(tokenContractAddress, tokenABI, provider);
     
     const tokenBalance=(await tokenContract.balanceOf(flipkartAddress));
     console.log("Flip ",tokenBalance.toString());
   }
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+
+  const handleSubmit = async (productId,
+    businessWalletAddress,
+    tokenContractAddress) => {
+    // e.preventDefault();
     await connectWallet();
+    // console.log(productId);
+    console.log(tokenContractAddress);
+    console.log("This is flip : ",await getBusinessBalance(tokenContractAddress));
+    // console.log(tokenContractAddress);
     if (window.ethereum) {
 
         try{
@@ -459,7 +476,7 @@ const RegisterBusiness = () => {
         const signer = provider.getSigner();
         
       const contractAddress = '0x00A7Ba5413dc1101F264ADc59e76d05f13176c4C'; // Replace with your smart contract address
-      const contractABI =[
+      const contractABI = [
         {
           "inputs": [],
           "payable": false,
@@ -742,38 +759,49 @@ const RegisterBusiness = () => {
         }
       ]; // Replace with your smart contract ABI
 
-      const contract = new ethers.Contract(contractAddress, contractABI, signer);
+      const contract = new ethers.
+      Contract(contractAddress, contractABI, signer);
 
+      const userAdd=await signer.getAddress();
+      
+      // const userAdd="0x71D877205869Ac2e280E0801d165115ae49E0882";
+
+
+
+
+       // reward(address _cAd, uint256 _points,address _bAd) 
       const flipkartAddress ='0xee100e284DC8417aC5D803AbA0DcD743E76B1374';
       
-      const add=await signer.getAddress();
-      const tx = await contract.regBusiness(
-        flipkartAddress,
-        businessData.name,
-        businessData.email,
-        add, // Sender's address
-        businessData.tokenSymbol, // Replace with the actual token symbol
-        18, // Replace with the actual decimal value
-      );
-      const txResponse = await tx.wait();
-      console.log('Transaction Response : ',txResponse.transactionHash);
+      const tokenValue = ethers.utils.parseUnits('0', 18);
+      const transaction2 = await contract.reward(flipkartAddress,userAdd,tokenValue,businessWalletAddress);
       
-      const hash=txResponse.transactionHash;
-      const ltAddress = await contract.getBusinessCoin(add);
-      console.log('LT Address:', ltAddress);
+       // businessId , amount
+     const txResponse2 = await transaction2.wait();
+     console.log('Transaction Response : ',txResponse2.transactionHash);
+     
+     const hash2=txResponse2.transactionHash;
 
-      const password=businessData.pwd;
-      const businessWalletAddress=add;
-      const email=businessData.email;
-      const name=businessData.name;
+      // userWalletAddress:req.body.userWalletAddress,
+    //   firstName:req.body.firstName,
+    //   lastName:req.body.lastName,
+    //   userEmail:req.body.userEmail,
+
+      // const pwd=customerData.pwd;
+      // const userWalletAddress=add;
+      // const userEmail=customerData.userEmail;
+      // const firstName=customerData.firstName;
+      // const lastName=customerData.lastName;
+
+
       // Send transaction hash and other data to your backend
-      const response = await axios.post('http://localhost:3000/registerBusiness', {
-        signedTransaction:hash,
-        businessWalletAddress,
-        name,
-        email,
-        pwd: password,
-        tokenContractAddress:ltAddress
+      const response = await axios.post('http://localhost:3000/getReward', {
+        signedTransaction:hash2,
+        businessId:productId,
+        amount:0
+      }, {
+        headers: {
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGRhNWU4YjRkODhlMWQyMDMyZDg4YzciLCJyb2xlIjoiQ3VzdG9tZXIiLCJpYXQiOjE2OTIwMzM2NjB9.jgAmNvyhj3Qgi7-yFb2OujJUJ1i0wOtMzfZvV8G5zp0`, // Provide your access token
+        },
       });
 
       // Handle the response from the backend
@@ -793,6 +821,332 @@ const RegisterBusiness = () => {
       }
   };
 
+  const handleJoinBusiness=async(productId,
+    businessWalletAddress,
+    tokenContractAddress)=>{
+    if (window.ethereum) {
+      try{
+        await window.ethereum.enable();
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        // Prompt user for account connections
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        
+      const contractAddress = '0x00A7Ba5413dc1101F264ADc59e76d05f13176c4C'; // Replace with your smart contract address
+      const contractABI = [
+        {
+          "inputs": [],
+          "payable": false,
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "constant": true,
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "businesses",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "busAd",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "email",
+              "type": "string"
+            },
+            {
+              "internalType": "bool",
+              "name": "isReg",
+              "type": "bool"
+            },
+            {
+              "internalType": "contract loyalty_points",
+              "name": "lt",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "count",
+              "type": "uint256"
+            }
+          ],
+          "payable": false,
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "constant": true,
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "customers",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "cusAd",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "firstName",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "lastName",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "email",
+              "type": "string"
+            },
+            {
+              "internalType": "bool",
+              "name": "isReg",
+              "type": "bool"
+            }
+          ],
+          "payable": false,
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "constant": true,
+          "inputs": [],
+          "name": "flipkartAccount",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "payable": false,
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "constant": true,
+          "inputs": [],
+          "name": "isAddressInitialized",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "payable": false,
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "constant": false,
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "flipkartAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "_bName",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "_email",
+              "type": "string"
+            },
+            {
+              "internalType": "address",
+              "name": "_bAd",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "_symbol",
+              "type": "string"
+            },
+            {
+              "internalType": "uint8",
+              "name": "_decimal",
+              "type": "uint8"
+            }
+          ],
+          "name": "regBusiness",
+          "outputs": [],
+          "payable": false,
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "constant": true,
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_bAd",
+              "type": "address"
+            }
+          ],
+          "name": "getBusinessCoin",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "payable": false,
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "constant": false,
+          "inputs": [
+            {
+              "internalType": "string",
+              "name": "_firstName",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "_lastName",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "_email",
+              "type": "string"
+            },
+            {
+              "internalType": "address",
+              "name": "_cAd",
+              "type": "address"
+            }
+          ],
+          "name": "regCustomer",
+          "outputs": [],
+          "payable": false,
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "constant": false,
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_bAd",
+              "type": "address"
+            }
+          ],
+          "name": "joinBusiness",
+          "outputs": [],
+          "payable": false,
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "constant": false,
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_flipkartAccount",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "_cAd",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_points",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "_bAd",
+              "type": "address"
+            }
+          ],
+          "name": "reward",
+          "outputs": [],
+          "payable": false,
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "constant": true,
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_bAd",
+              "type": "address"
+            }
+          ],
+          "name": "getBusinessBalance",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "payable": false,
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]; // Replace with your smart contract ABI
+
+      const contract = new ethers.
+      Contract(contractAddress, contractABI, signer);
+
+        // reward(address _cAd, uint256 _points,address _bAd) 
+      const transaction = await contract.joinBusiness(businessWalletAddress);
+      
+      //   // businessId , amount
+      const txResponse = await transaction.wait();
+      console.log('Transaction Response : ',txResponse.transactionHash);
+      
+      const hash=txResponse.transactionHash;
+
+      const response = await axios.post('http://localhost:3000/joinBusiness', {
+        signedTransaction:hash,
+        businessId:productId,
+      }, {
+        headers: {
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGRhNWU4YjRkODhlMWQyMDMyZDg4YzciLCJyb2xlIjoiQ3VzdG9tZXIiLCJpYXQiOjE2OTIwMzM2NjB9.jgAmNvyhj3Qgi7-yFb2OujJUJ1i0wOtMzfZvV8G5zp0`, // Provide your access token
+        },
+      });
+
+      console.log(response.data);
+
+
+      }
+      catch(error){
+        console.log(error);
+      }
+    }      
+  }
+
   const getAllBusiness=async()=>{
     const response = await axios.get('http://localhost:3000/getListOfBusiness');
 
@@ -800,71 +1154,30 @@ const RegisterBusiness = () => {
       console.log(response.data); // This should contain user details and access token 
   }
 
-
+// _id businessWalletAddress name tokenContractAddress
   return (
-    <div className="container">
-      <div className="register-form">
-        <h2>Register Your Business</h2>
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="businessName">Business Name</label>
-          <input
-            type="text"
-            id="businessName"
-            placeholder="Enter your business name"
-            value={businessData.name}
-            onChange={(e) => setBusinessData({ ...businessData, name: e.target.value })}
-            required
-          />
-
-          <label htmlFor="businessEmail">Business Email</label>
-          <input
-            type="email"
-            id="businessEmail"
-            placeholder="Enter your business email"
-            value={businessData.email}
-            onChange={(e) => setBusinessData({ ...businessData, email: e.target.value })}
-            required
-          />
-
-        <label htmlFor="pwd">Password</label>
-          <input
-            type="text"
-            id="pwd"
-            placeholder="Enter your pwd"
-            value={businessData.pwd}
-            onChange={(e) => setBusinessData({ ...businessData, pwd: e.target.value })}
-            required
-          />
-
-        {/* <label htmlFor="wallet">Business Wallet Address</label>
-          <input
-            type="text"
-            id="wallet"
-            placeholder="Enter your wallet address"
-            value={businessData.businessWalletAddress}
-            onChange={(e) => setBusinessData({ ...businessData, businessWalletAddress: e.target.value })}
-            required
-          /> */}
-
-        <label htmlFor="symb">Business Token Symbol</label>
-          <input
-            type="text"
-            id="symb"
-            placeholder="Enter your Token Symbol"
-            value={businessData.tokenSymbol}
-            onChange={(e) => setBusinessData({ ...businessData, tokenSymbol: e.target.value })}
-            required
-          />
-
-          {/* Add more input fields for other details */}
-          
-          <button type="submit" className="btn-register">Register</button>
-          <button type="button" className="btn-register" onClick={getBusinessBalance}>Get token Value !!</button>
-          <button type="button" className="btn-register" onClick={getAllBusiness}>Get All Businesses !!</button>
-        </form>
-      </div>
+    <div className="product-list">
+      <h2>Product List</h2>
+      <ul>
+        {products.map(product => (
+          <li key={product._id}>
+            <div className="product">
+              <h3>{product.name}</h3>
+              <button onClick={() => handleSubmit
+              (product._id,
+              product.businessWalletAddress,
+              product.tokenContractAddress)}>Purchase</button>
+              <button onClick={() => handleJoinBusiness
+              (product._id,
+              product.businessWalletAddress,
+              product.tokenContractAddress)}>Join</button>
+              
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
 
-export default RegisterBusiness;
+export default GetReward;

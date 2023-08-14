@@ -458,7 +458,7 @@ const RegisterCustomer = () => {
         await provider.send("eth_requestAccounts", []);
         const signer = provider.getSigner();
         
-      const contractAddress = '0xd302b4657979b53d539108504f3fc94b1083260d'; // Replace with your smart contract address
+      const contractAddress = '0x00A7Ba5413dc1101F264ADc59e76d05f13176c4C'; // Replace with your smart contract address
       const contractABI = [
         {
           "inputs": [],
@@ -692,6 +692,11 @@ const RegisterCustomer = () => {
         {
           "constant": false,
           "inputs": [
+            {
+              "internalType": "address",
+              "name": "_flipkartAccount",
+              "type": "address"
+            },
             {
               "internalType": "address",
               "name": "_cAd",
