@@ -1,7 +1,7 @@
 // src/components/RegisterBusiness.js
 import React, { useEffect, useState } from 'react';
 import './RegisterBusiness.css'; // Import the custom CSS file
-import { ethers } from "ethers";
+import { Wallet, ethers } from "ethers";
 import axios from 'axios';
 import './ProductList.css'; // Import the CSS file
 
@@ -463,8 +463,6 @@ const GetReward = () => {
     await connectWallet();
     // console.log(productId);
     console.log(tokenContractAddress);
-    console.log("This is flip : ",await getBusinessBalance(tokenContractAddress));
-    // console.log(tokenContractAddress);
     if (window.ethereum) {
 
         try{
@@ -474,312 +472,283 @@ const GetReward = () => {
         // Prompt user for account connections
         await provider.send("eth_requestAccounts", []);
         const signer = provider.getSigner();
-        
-      const contractAddress = '0x00A7Ba5413dc1101F264ADc59e76d05f13176c4C'; // Replace with your smart contract address
-      const contractABI = [
-        {
-          "inputs": [],
-          "payable": false,
-          "stateMutability": "nonpayable",
-          "type": "constructor"
-        },
-        {
-          "constant": true,
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "name": "businesses",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "busAd",
-              "type": "address"
-            },
-            {
-              "internalType": "string",
-              "name": "name",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "email",
-              "type": "string"
-            },
-            {
-              "internalType": "bool",
-              "name": "isReg",
-              "type": "bool"
-            },
-            {
-              "internalType": "contract loyalty_points",
-              "name": "lt",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "count",
-              "type": "uint256"
-            }
-          ],
-          "payable": false,
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "constant": true,
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "name": "customers",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "cusAd",
-              "type": "address"
-            },
-            {
-              "internalType": "string",
-              "name": "firstName",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "lastName",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "email",
-              "type": "string"
-            },
-            {
-              "internalType": "bool",
-              "name": "isReg",
-              "type": "bool"
-            }
-          ],
-          "payable": false,
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "constant": true,
-          "inputs": [],
-          "name": "flipkartAccount",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "payable": false,
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "constant": true,
-          "inputs": [],
-          "name": "isAddressInitialized",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "payable": false,
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "constant": false,
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "flipkartAddress",
-              "type": "address"
-            },
-            {
-              "internalType": "string",
-              "name": "_bName",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "_email",
-              "type": "string"
-            },
-            {
-              "internalType": "address",
-              "name": "_bAd",
-              "type": "address"
-            },
-            {
-              "internalType": "string",
-              "name": "_symbol",
-              "type": "string"
-            },
-            {
-              "internalType": "uint8",
-              "name": "_decimal",
-              "type": "uint8"
-            }
-          ],
-          "name": "regBusiness",
-          "outputs": [],
-          "payable": false,
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "constant": true,
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_bAd",
-              "type": "address"
-            }
-          ],
-          "name": "getBusinessCoin",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "payable": false,
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "constant": false,
-          "inputs": [
-            {
-              "internalType": "string",
-              "name": "_firstName",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "_lastName",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "_email",
-              "type": "string"
-            },
-            {
-              "internalType": "address",
-              "name": "_cAd",
-              "type": "address"
-            }
-          ],
-          "name": "regCustomer",
-          "outputs": [],
-          "payable": false,
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "constant": false,
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_bAd",
-              "type": "address"
-            }
-          ],
-          "name": "joinBusiness",
-          "outputs": [],
-          "payable": false,
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "constant": false,
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_flipkartAccount",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "_cAd",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "_points",
-              "type": "uint256"
-            },
-            {
-              "internalType": "address",
-              "name": "_bAd",
-              "type": "address"
-            }
-          ],
-          "name": "reward",
-          "outputs": [],
-          "payable": false,
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "constant": true,
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_bAd",
-              "type": "address"
-            }
-          ],
-          "name": "getBusinessBalance",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "payable": false,
-          "stateMutability": "view",
-          "type": "function"
+       
+        const contractAddress = '0x06441b211a8729B40FE15955F9A58b2F5829d022'; // Replace with your smart contract address
+        const contractABI =[
+          {
+            "inputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "constructor"
+          },
+          {
+            "constant": true,
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "name": "businesses",
+            "outputs": [
+              {
+                "internalType": "address",
+                "name": "busAd",
+                "type": "address"
+              },
+              {
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "email",
+                "type": "string"
+              },
+              {
+                "internalType": "bool",
+                "name": "isReg",
+                "type": "bool"
+              },
+              {
+                "internalType": "contract loyalty_points",
+                "name": "lt",
+                "type": "address"
+              }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "constant": true,
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "name": "customers",
+            "outputs": [
+              {
+                "internalType": "address",
+                "name": "cusAd",
+                "type": "address"
+              },
+              {
+                "internalType": "string",
+                "name": "firstName",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "lastName",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "email",
+                "type": "string"
+              },
+              {
+                "internalType": "bool",
+                "name": "isReg",
+                "type": "bool"
+              }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "constant": false,
+            "inputs": [
+              {
+                "internalType": "string",
+                "name": "_bName",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "_email",
+                "type": "string"
+              },
+              {
+                "internalType": "address",
+                "name": "_bAd",
+                "type": "address"
+              },
+              {
+                "internalType": "string",
+                "name": "_symbol",
+                "type": "string"
+              },
+              {
+                "internalType": "uint8",
+                "name": "_decimal",
+                "type": "uint8"
+              }
+            ],
+            "name": "regBusiness",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "constant": true,
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "_bAd",
+                "type": "address"
+              }
+            ],
+            "name": "getBusinessCoin",
+            "outputs": [
+              {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "constant": false,
+            "inputs": [
+              {
+                "internalType": "string",
+                "name": "_firstName",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "_lastName",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "_email",
+                "type": "string"
+              },
+              {
+                "internalType": "address",
+                "name": "_cAd",
+                "type": "address"
+              }
+            ],
+            "name": "regCustomer",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "constant": false,
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "_bAd",
+                "type": "address"
+              }
+            ],
+            "name": "joinBusiness",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "constant": false,
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "_cAd",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "_points",
+                "type": "uint256"
+              },
+              {
+                "internalType": "address",
+                "name": "_bAd",
+                "type": "address"
+              }
+            ],
+            "name": "reward",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "constant": false,
+            "inputs": [
+              {
+                "internalType": "uint256",
+                "name": "_points",
+                "type": "uint256"
+              },
+              {
+                "internalType": "address",
+                "name": "_bAd",
+                "type": "address"
+              }
+            ],
+            "name": "listProductReward",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "constant": false,
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "_cAd",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "_points",
+                "type": "uint256"
+              },
+              {
+                "internalType": "address",
+                "name": "_bAd",
+                "type": "address"
+              }
+            ],
+            "name": "spend",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
         }
-      ]; // Replace with your smart contract ABI
+      ];
 
-      const contract = new ethers.
-      Contract(contractAddress, contractABI, signer);
+      const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
       const userAdd=await signer.getAddress();
+      // uint256 _points
+      const _points=ethers.utils.parseUnits('1', '18');
+      const transaction = await contract.
+      reward(userAdd,_points,businessWalletAddress);
       
-      // const userAdd="0x71D877205869Ac2e280E0801d165115ae49E0882";
-
-
-
-
-       // reward(address _cAd, uint256 _points,address _bAd) 
-      const flipkartAddress ='0xee100e284DC8417aC5D803AbA0DcD743E76B1374';
+      const txResponse = await transaction.wait();
+      console.log('Transaction Response : ',txResponse.transactionHash);
       
-      const tokenValue = ethers.utils.parseUnits('0', 18);
-      const transaction2 = await contract.reward(flipkartAddress,userAdd,tokenValue,businessWalletAddress);
-      
-       // businessId , amount
-     const txResponse2 = await transaction2.wait();
-     console.log('Transaction Response : ',txResponse2.transactionHash);
-     
-     const hash2=txResponse2.transactionHash;
+      const hash=txResponse.transactionHash;
+
 
       // userWalletAddress:req.body.userWalletAddress,
     //   firstName:req.body.firstName,
@@ -795,16 +764,16 @@ const GetReward = () => {
 
       // Send transaction hash and other data to your backend
       const response = await axios.post('http://localhost:3000/getReward', {
-        signedTransaction:hash2,
+        signedTransaction:hash,
         businessId:productId,
-        amount:0
+        amount:1
       }, {
         headers: {
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGRhNWU4YjRkODhlMWQyMDMyZDg4YzciLCJyb2xlIjoiQ3VzdG9tZXIiLCJpYXQiOjE2OTIwMzM2NjB9.jgAmNvyhj3Qgi7-yFb2OujJUJ1i0wOtMzfZvV8G5zp0`, // Provide your access token
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGRkNDY3M2M2ODliMzRkMzY5ZmRlZGYiLCJyb2xlIjoiQ3VzdG9tZXIiLCJpYXQiOjE2OTIyMjMwOTF9.1WFN8JJAVQUkwFVr4a1GA1HfhyGFMFLPIoJHhLdeMpY`, // Provide your access token
         },
       });
 
-      // Handle the response from the backend
+      // // Handle the response from the backend
       console.log(response.data); // This should contain user details and access token        
 
 
@@ -832,287 +801,266 @@ const GetReward = () => {
         await provider.send("eth_requestAccounts", []);
         const signer = provider.getSigner();
         
-      const contractAddress = '0x00A7Ba5413dc1101F264ADc59e76d05f13176c4C'; // Replace with your smart contract address
-      const contractABI = [
-        {
-          "inputs": [],
-          "payable": false,
-          "stateMutability": "nonpayable",
-          "type": "constructor"
-        },
-        {
-          "constant": true,
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "name": "businesses",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "busAd",
-              "type": "address"
-            },
-            {
-              "internalType": "string",
-              "name": "name",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "email",
-              "type": "string"
-            },
-            {
-              "internalType": "bool",
-              "name": "isReg",
-              "type": "bool"
-            },
-            {
-              "internalType": "contract loyalty_points",
-              "name": "lt",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "count",
-              "type": "uint256"
-            }
-          ],
-          "payable": false,
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "constant": true,
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "name": "customers",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "cusAd",
-              "type": "address"
-            },
-            {
-              "internalType": "string",
-              "name": "firstName",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "lastName",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "email",
-              "type": "string"
-            },
-            {
-              "internalType": "bool",
-              "name": "isReg",
-              "type": "bool"
-            }
-          ],
-          "payable": false,
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "constant": true,
-          "inputs": [],
-          "name": "flipkartAccount",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "payable": false,
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "constant": true,
-          "inputs": [],
-          "name": "isAddressInitialized",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "payable": false,
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "constant": false,
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "flipkartAddress",
-              "type": "address"
-            },
-            {
-              "internalType": "string",
-              "name": "_bName",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "_email",
-              "type": "string"
-            },
-            {
-              "internalType": "address",
-              "name": "_bAd",
-              "type": "address"
-            },
-            {
-              "internalType": "string",
-              "name": "_symbol",
-              "type": "string"
-            },
-            {
-              "internalType": "uint8",
-              "name": "_decimal",
-              "type": "uint8"
-            }
-          ],
-          "name": "regBusiness",
-          "outputs": [],
-          "payable": false,
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "constant": true,
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_bAd",
-              "type": "address"
-            }
-          ],
-          "name": "getBusinessCoin",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "payable": false,
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "constant": false,
-          "inputs": [
-            {
-              "internalType": "string",
-              "name": "_firstName",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "_lastName",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "_email",
-              "type": "string"
-            },
-            {
-              "internalType": "address",
-              "name": "_cAd",
-              "type": "address"
-            }
-          ],
-          "name": "regCustomer",
-          "outputs": [],
-          "payable": false,
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "constant": false,
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_bAd",
-              "type": "address"
-            }
-          ],
-          "name": "joinBusiness",
-          "outputs": [],
-          "payable": false,
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "constant": false,
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_flipkartAccount",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "_cAd",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "_points",
-              "type": "uint256"
-            },
-            {
-              "internalType": "address",
-              "name": "_bAd",
-              "type": "address"
-            }
-          ],
-          "name": "reward",
-          "outputs": [],
-          "payable": false,
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "constant": true,
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_bAd",
-              "type": "address"
-            }
-          ],
-          "name": "getBusinessBalance",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "payable": false,
-          "stateMutability": "view",
-          "type": "function"
+        const contractAddress = '0x06441b211a8729B40FE15955F9A58b2F5829d022'; // Replace with your smart contract address
+        const contractABI =[
+          {
+            "inputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "constructor"
+          },
+          {
+            "constant": true,
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "name": "businesses",
+            "outputs": [
+              {
+                "internalType": "address",
+                "name": "busAd",
+                "type": "address"
+              },
+              {
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "email",
+                "type": "string"
+              },
+              {
+                "internalType": "bool",
+                "name": "isReg",
+                "type": "bool"
+              },
+              {
+                "internalType": "contract loyalty_points",
+                "name": "lt",
+                "type": "address"
+              }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "constant": true,
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "name": "customers",
+            "outputs": [
+              {
+                "internalType": "address",
+                "name": "cusAd",
+                "type": "address"
+              },
+              {
+                "internalType": "string",
+                "name": "firstName",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "lastName",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "email",
+                "type": "string"
+              },
+              {
+                "internalType": "bool",
+                "name": "isReg",
+                "type": "bool"
+              }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "constant": false,
+            "inputs": [
+              {
+                "internalType": "string",
+                "name": "_bName",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "_email",
+                "type": "string"
+              },
+              {
+                "internalType": "address",
+                "name": "_bAd",
+                "type": "address"
+              },
+              {
+                "internalType": "string",
+                "name": "_symbol",
+                "type": "string"
+              },
+              {
+                "internalType": "uint8",
+                "name": "_decimal",
+                "type": "uint8"
+              }
+            ],
+            "name": "regBusiness",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "constant": true,
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "_bAd",
+                "type": "address"
+              }
+            ],
+            "name": "getBusinessCoin",
+            "outputs": [
+              {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "constant": false,
+            "inputs": [
+              {
+                "internalType": "string",
+                "name": "_firstName",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "_lastName",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "_email",
+                "type": "string"
+              },
+              {
+                "internalType": "address",
+                "name": "_cAd",
+                "type": "address"
+              }
+            ],
+            "name": "regCustomer",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "constant": false,
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "_bAd",
+                "type": "address"
+              }
+            ],
+            "name": "joinBusiness",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "constant": false,
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "_cAd",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "_points",
+                "type": "uint256"
+              },
+              {
+                "internalType": "address",
+                "name": "_bAd",
+                "type": "address"
+              }
+            ],
+            "name": "reward",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "constant": false,
+            "inputs": [
+              {
+                "internalType": "uint256",
+                "name": "_points",
+                "type": "uint256"
+              },
+              {
+                "internalType": "address",
+                "name": "_bAd",
+                "type": "address"
+              }
+            ],
+            "name": "listProductReward",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "constant": false,
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "_cAd",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "_points",
+                "type": "uint256"
+              },
+              {
+                "internalType": "address",
+                "name": "_bAd",
+                "type": "address"
+              }
+            ],
+            "name": "spend",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
         }
       ]; // Replace with your smart contract ABI
 
@@ -1133,7 +1081,7 @@ const GetReward = () => {
         businessId:productId,
       }, {
         headers: {
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGRhNWU4YjRkODhlMWQyMDMyZDg4YzciLCJyb2xlIjoiQ3VzdG9tZXIiLCJpYXQiOjE2OTIwMzM2NjB9.jgAmNvyhj3Qgi7-yFb2OujJUJ1i0wOtMzfZvV8G5zp0`, // Provide your access token
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGRkNDY3M2M2ODliMzRkMzY5ZmRlZGYiLCJyb2xlIjoiQ3VzdG9tZXIiLCJpYXQiOjE2OTIyMjMwOTF9.1WFN8JJAVQUkwFVr4a1GA1HfhyGFMFLPIoJHhLdeMpY`, // Provide your access token
         },
       });
 
@@ -1146,6 +1094,341 @@ const GetReward = () => {
       }
     }      
   }
+
+  const handleSpend=async (productId,
+    businessWalletAddress,
+    tokenContractAddress) => {
+    // e.preventDefault();
+    await connectWallet();
+    // console.log(productId);
+    console.log(tokenContractAddress);
+    if (window.ethereum) {
+
+        try{
+          // Request account access if needed
+        await window.ethereum.enable();
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        // Prompt user for account connections
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+       
+        const contractAddress = '0x06441b211a8729B40FE15955F9A58b2F5829d022'; // Replace with your smart contract address
+        const contractABI =[
+          {
+            "inputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "constructor"
+          },
+          {
+            "constant": true,
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "name": "businesses",
+            "outputs": [
+              {
+                "internalType": "address",
+                "name": "busAd",
+                "type": "address"
+              },
+              {
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "email",
+                "type": "string"
+              },
+              {
+                "internalType": "bool",
+                "name": "isReg",
+                "type": "bool"
+              },
+              {
+                "internalType": "contract loyalty_points",
+                "name": "lt",
+                "type": "address"
+              }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "constant": true,
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "name": "customers",
+            "outputs": [
+              {
+                "internalType": "address",
+                "name": "cusAd",
+                "type": "address"
+              },
+              {
+                "internalType": "string",
+                "name": "firstName",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "lastName",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "email",
+                "type": "string"
+              },
+              {
+                "internalType": "bool",
+                "name": "isReg",
+                "type": "bool"
+              }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "constant": false,
+            "inputs": [
+              {
+                "internalType": "string",
+                "name": "_bName",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "_email",
+                "type": "string"
+              },
+              {
+                "internalType": "address",
+                "name": "_bAd",
+                "type": "address"
+              },
+              {
+                "internalType": "string",
+                "name": "_symbol",
+                "type": "string"
+              },
+              {
+                "internalType": "uint8",
+                "name": "_decimal",
+                "type": "uint8"
+              }
+            ],
+            "name": "regBusiness",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "constant": true,
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "_bAd",
+                "type": "address"
+              }
+            ],
+            "name": "getBusinessCoin",
+            "outputs": [
+              {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "constant": false,
+            "inputs": [
+              {
+                "internalType": "string",
+                "name": "_firstName",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "_lastName",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "_email",
+                "type": "string"
+              },
+              {
+                "internalType": "address",
+                "name": "_cAd",
+                "type": "address"
+              }
+            ],
+            "name": "regCustomer",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "constant": false,
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "_bAd",
+                "type": "address"
+              }
+            ],
+            "name": "joinBusiness",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "constant": false,
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "_cAd",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "_points",
+                "type": "uint256"
+              },
+              {
+                "internalType": "address",
+                "name": "_bAd",
+                "type": "address"
+              }
+            ],
+            "name": "reward",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "constant": false,
+            "inputs": [
+              {
+                "internalType": "uint256",
+                "name": "_points",
+                "type": "uint256"
+              },
+              {
+                "internalType": "address",
+                "name": "_bAd",
+                "type": "address"
+              }
+            ],
+            "name": "listProductReward",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "constant": false,
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "_cAd",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "_points",
+                "type": "uint256"
+              },
+              {
+                "internalType": "address",
+                "name": "_bAd",
+                "type": "address"
+              }
+            ],
+            "name": "spend",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        }
+      ];
+
+      const contract = new ethers.Contract(contractAddress, contractABI, signer);
+
+      //spend(address _cAd,uint256 _points,address _bAd) 
+      const userAdd=await signer.getAddress();
+      // uint256 _points
+      const _points=ethers.utils.parseUnits('1', '18');
+      const transaction = await contract.
+      spend(userAdd,_points,businessWalletAddress);
+      
+      const txResponse = await transaction.wait();
+      console.log('Transaction Response : ',txResponse.transactionHash);
+      
+      const hash=txResponse.transactionHash;
+
+
+      // userWalletAddress:req.body.userWalletAddress,
+    //   firstName:req.body.firstName,
+    //   lastName:req.body.lastName,
+    //   userEmail:req.body.userEmail,
+
+      // const pwd=customerData.pwd;
+      // const userWalletAddress=add;
+      // const userEmail=customerData.userEmail;
+      // const firstName=customerData.firstName;
+      // const lastName=customerData.lastName;
+
+
+      // Send transaction hash and other data to your backend
+      const response = await axios.post('http://localhost:3000/spend', {
+        signedTransaction:hash,
+        businessId:productId,
+        amount:1
+      }, {
+        headers: {
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGRkNDY3M2M2ODliMzRkMzY5ZmRlZGYiLCJyb2xlIjoiQ3VzdG9tZXIiLCJpYXQiOjE2OTIyMjMwOTF9.1WFN8JJAVQUkwFVr4a1GA1HfhyGFMFLPIoJHhLdeMpY`, // Provide your access token
+        },
+      });
+
+      // // Handle the response from the backend
+      console.log(response.data); // This should contain user details and access token        
+
+
+    }
+      catch(error){
+        console.log(error);
+      }
+
+
+      
+      }
+      else{
+        await connectWallet();
+      }
+  };
 
   const getAllBusiness=async()=>{
     const response = await axios.get('http://localhost:3000/getListOfBusiness');
@@ -1172,6 +1455,12 @@ const GetReward = () => {
               product.businessWalletAddress,
               product.tokenContractAddress)}>Join</button>
               
+              <button onClick={() => handleSpend
+              (product._id,
+              product.businessWalletAddress,
+              product.tokenContractAddress)}>Spend</button>
+              
+
             </div>
           </li>
         ))}
